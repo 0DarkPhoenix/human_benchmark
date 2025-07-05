@@ -25,25 +25,35 @@ When you run the executable, you are greeted with an overview of the available t
 ⏯ Video coming soon...
 
 ### Typing
-![Typing](assets/videos/typing.mp4)
+<video width="600" controls>
+  <source src="assets/videos/typing.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### Sequence Memory
 🚧 Under development 🚧
 
 ### Aim Trainer
-![Aim Trainer](assets/videos/aim_trainer.mp4)
+<video width="600" controls>
+  <source src="assets/videos/aim_trainer.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### Number Memory
 🚧 Under development 🚧
 
 ### Chimp Test
-![Chimp Test](assets/videos/chimp_test.mp4)
+<video width="600" controls>
+  <source src="assets/videos/chimp_test.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### Verbal Memory
 🚧 Under development 🚧
 
 ### Visual Memory
 🚧 Under development 🚧
+
 
 ## Crates
 - [headless_chrome](https://crates.io/crates/headless_chrome) for launching a automated Chrome instance, retrieve HTML content from the page and perform click actions in non-performance-critical sections
