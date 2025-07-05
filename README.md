@@ -25,28 +25,19 @@ When you run the executable, you are greeted with an overview of the available t
 ⏯ Video coming soon...
 
 ### Typing
-<video width="600" controls>
-  <source src="assets/videos/typing.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/6ec1e134-a56b-4a70-a770-8a993f9ac512
 
 ### Sequence Memory
 🚧 Under development 🚧
 
 ### Aim Trainer
-<video width="600" controls>
-  <source src="assets/videos/aim_trainer.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/4fb68d11-0dc7-494e-aa30-38bb1de49afb
 
 ### Number Memory
 🚧 Under development 🚧
 
 ### Chimp Test
-<video width="600" controls>
-  <source src="assets/videos/chimp_test.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/c4c41fd2-d533-417b-bb6b-8f2e67472474
 
 ### Verbal Memory
 🚧 Under development 🚧
