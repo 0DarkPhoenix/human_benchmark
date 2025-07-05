@@ -2,7 +2,7 @@
 ### 🚧 Under development 🚧
 A CLI tool written in Rust and optimized for Windows (x86) with scripts to beat every [Human Benchmark](https://humanbenchmark.com/) test.
 
-Human Benchmark is a website where you can do multiple tests to see how you compare to other humans in areas like reaction time, memory, typing speed, and more. Doing these test yourself is fun, but it is even more fun to see how far you can push those tests to their absolute limit using your computer to do the hard work ;)
+Human Benchmark is a website where you can do multiple tests to see how you compare to other humans in areas like reaction time, memory, typing speed, and more. Doing these tests yourself is fun, but it is even more fun to see how far you can push those tests using your computer to do the hard work ;)
 
 ## Installation
 Whichever installation method you choose, make sure you have [Chrome](https://www.google.com/chrome/) installed.
