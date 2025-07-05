@@ -19,9 +19,8 @@ async fn main() -> Result<()> {
 
         match choice.as_str() {
             "1" | "reaction" | "reaction-time" => {
-                let rounds = get_numeric_input("Enter number of rounds (default: 4): ", 4)?;
-                println!("Running Reaction Time test for {} rounds...", rounds);
-                reaction_time::run(rounds).await?;
+                println!("Running Reaction Time test...");
+                reaction_time::run().await?;
             }
             "2" | "typing" => {
                 println!("Running Typing test...");

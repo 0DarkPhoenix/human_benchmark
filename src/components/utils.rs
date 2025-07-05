@@ -11,6 +11,12 @@ use winapi::um::winuser::{
     VK_ESCAPE,
 };
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
+}
+
 /// Finds and clicks the cookies acceptance button on the Human Benchmark website.
 ///
 /// This function waits for the cookies button element to appear, then attempts to click it.

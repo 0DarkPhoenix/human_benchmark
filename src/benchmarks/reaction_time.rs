@@ -11,7 +11,7 @@ use winapi::um::{
     },
 };
 
-pub async fn run(rounds: u32) -> Result<()> {
+pub async fn run() -> Result<()> {
     println!("🚦 Starting Reaction Time Test");
 
     let runner = TestRunner::new()?;
@@ -28,8 +28,8 @@ pub async fn run(rounds: u32) -> Result<()> {
     let (click_x, click_y) = get_reaction_area_coordinates(&tab)?;
     println!("Reaction area coordinates: ({}, {})", click_x, click_y);
 
-    for round in 1..=rounds.min(4) {
-        println!("Round {}/{}", round, rounds);
+    for round in 1..6 {
+        println!("Round {}/{}", round, 5);
 
         // Click start button
         if round == 1 {
@@ -50,8 +50,7 @@ pub async fn run(rounds: u32) -> Result<()> {
 
         #[cfg(target_os = "windows")]
         {
-            // Use ultra-fast Windows optimization
-            match ultra_fast_windows_detection(click_x, click_y) {
+            match reaction_time_actions(click_x, click_y) {
                 Ok(_) => {
                     // Read the reaction time from the page
                     tab.wait_for_element(".view-result.e18o0sx0.css-saet2v.e19owgy77")?;
@@ -64,7 +63,7 @@ pub async fn run(rounds: u32) -> Result<()> {
                                     time_text.trim_end_matches(" ms").parse::<u32>()
                                 {
                                     results.push(reaction_ms);
-                                    println!("  Ultra-fast result: {} ms", reaction_ms);
+                                    println!("Result: {} ms", reaction_ms);
                                 }
                             }
                         }
@@ -81,7 +80,7 @@ pub async fn run(rounds: u32) -> Result<()> {
         let average = results.iter().sum::<u32>() as f32 / results.len() as f32;
         let best = *results.iter().min().unwrap();
         let worst = *results.iter().max().unwrap();
-        println!("\n📊 Ultra-Optimized Reaction Time Results:");
+        println!("\n📊 Reaction Time Results:");
         println!("  Average: {:.1} ms", average);
         println!("  Best: {} ms", best);
         println!("  Worst: {} ms", worst);
@@ -104,12 +103,7 @@ fn get_reaction_area_coordinates(tab: &headless_chrome::Tab) -> Result<(i32, i32
 }
 
 #[cfg(target_os = "windows")]
-fn ultra_fast_windows_detection(click_x: i32, click_y: i32) -> Result<u32, String> {
-    println!(
-        "Using MAXIMUM SPEED Windows detection at ({}, {}) synced to 165Hz",
-        click_x, click_y
-    );
-
+fn reaction_time_actions(click_x: i32, click_y: i32) -> Result<u32, String> {
     unsafe {
         let hwnd = GetDesktopWindow();
         let hdc = GetDC(hwnd);
@@ -126,7 +120,7 @@ fn ultra_fast_windows_detection(click_x: i32, click_y: i32) -> Result<u32, Strin
 
         // Remove frame synchronization entirely - just poll as fast as possible
         let start_time = std::time::Instant::now();
-        let mut iteration_count = 0u32;
+        let mut iteration_count = 0;
 
         loop {
             // Direct pixel read - no frame waiting

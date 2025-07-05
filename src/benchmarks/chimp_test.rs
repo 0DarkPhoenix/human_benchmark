@@ -1,17 +1,11 @@
 use super::TestRunner;
-use crate::utils::{click_cookies_button, click_on_pixel, is_kill_switch_pressed};
+use crate::utils::{click_cookies_button, click_on_pixel, is_kill_switch_pressed, Point};
 use anyhow::Result;
 use headless_chrome::{Element, Tab};
 use rayon::prelude::*;
 use scraper::{Html, Selector};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-
-#[derive(Debug, Clone, PartialEq)]
-struct Point {
-    x: i32,
-    y: i32,
-}
 
 #[derive(Debug, Clone)]
 struct NumberPosition {

@@ -25,19 +25,19 @@ When you run the executable, you are greeted with an overview of the available t
 ⏯ Video coming soon...
 
 ### Typing
-⏯ Video coming soon...
+![Typing](assets/videos/typing.mp4)
 
 ### Sequence Memory
 🚧 Under development 🚧
 
 ### Aim Trainer
-⏯ Video coming soon...
+![Aim Trainer](assets/videos/aim_trainer.mp4)
 
 ### Number Memory
 🚧 Under development 🚧
 
 ### Chimp Test
-⏯ Video coming soon...
+![Chimp Test](assets/videos/chimp_test.mp4)
 
 ### Verbal Memory
 🚧 Under development 🚧
