@@ -1,5 +1,5 @@
 use anyhow::Result;
-use headless_chrome::Tab;
+use headless_chrome::{Element, Tab};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
@@ -75,6 +75,24 @@ pub fn click_on_pixel(x: i32, y: i32) -> Result<()> {
         mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
     }
     Ok(())
+}
+
+/// Calculate the position of the element by determining the pixel coordinates of the element's center.
+pub fn determ_center_of_element(
+    element: &Element,
+    window_x: &i32,
+    window_y: &i32,
+    x_offset: &i32,
+    y_offset: &i32,
+) -> Result<Point> {
+    let quad = element.get_box_model()?.content;
+    let center_x = (quad.top_left.x + quad.top_right.x) / 2.0;
+    let center_y = (quad.top_left.y + quad.bottom_left.y) / 2.0;
+    let screen_position = Point {
+        x: center_x as i32 + window_x + x_offset,
+        y: center_y as i32 + window_y + y_offset,
+    };
+    Ok(screen_position)
 }
 
 /// Checks if the ESC key is currently pressed (kill switch)

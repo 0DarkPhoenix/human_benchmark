@@ -1,7 +1,9 @@
 use super::TestRunner;
-use crate::utils::{click_cookies_button, click_on_pixel, is_kill_switch_pressed, Point};
+use crate::utils::{
+    click_cookies_button, click_on_pixel, determ_center_of_element, is_kill_switch_pressed, Point,
+};
 use anyhow::Result;
-use headless_chrome::{Element, Tab};
+use headless_chrome::Tab;
 use rayon::prelude::*;
 use scraper::{Html, Selector};
 use std::sync::Arc;
@@ -207,6 +209,7 @@ fn chimp_test_actions(tab: &Arc<Tab>) -> Result<()> {
     let start_time = Instant::now();
     let mut init_grid_time: u128 = 0;
 
+    // TODO: Implement an optimization to find the element containing the grid outside the loop, and using that instead of the entire page for retrieving the HTML (See verbal_memory.rs)
     while !is_kill_switch_pressed() {
         println!("Pass {}", pass);
         // Press the start/continue button
@@ -274,22 +277,4 @@ fn chimp_test_actions(tab: &Arc<Tab>) -> Result<()> {
     }
 
     Ok(())
-}
-
-/// Calculate the position of the element by determining the pixel coordinates of the element's center.
-fn determ_center_of_element(
-    element: &Element,
-    window_x: &i32,
-    window_y: &i32,
-    x_offset: &i32,
-    y_offset: &i32,
-) -> Result<Point> {
-    let quad = element.get_box_model()?.content;
-    let center_x = (quad.top_left.x + quad.top_right.x) / 2.0;
-    let center_y = (quad.top_left.y + quad.bottom_left.y) / 2.0;
-    let screen_position = Point {
-        x: center_x as i32 + window_x + x_offset,
-        y: center_y as i32 + window_y + y_offset,
-    };
-    Ok(screen_position)
 }
