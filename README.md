@@ -40,7 +40,7 @@ https://github.com/user-attachments/assets/4fb68d11-0dc7-494e-aa30-38bb1de49afb
 https://github.com/user-attachments/assets/c4c41fd2-d533-417b-bb6b-8f2e67472474
 
 ### Verbal Memory
-🚧 Under development 🚧
+https://github.com/user-attachments/assets/33dc4880-01fd-4088-b71a-dba19c162353
 
 ### Visual Memory
 🚧 Under development 🚧
