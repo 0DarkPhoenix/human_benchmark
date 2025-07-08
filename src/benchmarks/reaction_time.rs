@@ -1,15 +1,13 @@
-use crate::{benchmarks::TestRunner, utils::click_cookies_button};
+use std::{sync::Arc, time::Duration};
+
+use crate::{
+    benchmarks::TestRunner,
+    utils::{click_cookies_button, click_on_pixel, is_kill_switch_pressed},
+};
 
 use anyhow::Result;
 
-#[cfg(target_os = "windows")]
-use winapi::um::{
-    wingdi::GetPixel,
-    winuser::{
-        mouse_event, GetDC, GetDesktopWindow, ReleaseDC, SetCursorPos, MOUSEEVENTF_LEFTDOWN,
-        MOUSEEVENTF_LEFTUP,
-    },
-};
+use headless_chrome::Tab;
 
 pub async fn run() -> Result<()> {
     println!("🚦 Starting Reaction Time Test");
@@ -22,15 +20,11 @@ pub async fn run() -> Result<()> {
     // Handle cookies
     click_cookies_button(&tab)?;
 
-    let mut results = Vec::new();
-
     // Get the browser window position and reaction area coordinates
     let (click_x, click_y) = get_reaction_area_coordinates(&tab)?;
     println!("Reaction area coordinates: ({}, {})", click_x, click_y);
 
     for round in 1..6 {
-        println!("Round {}/{}", round, 5);
-
         // Click start button
         if round == 1 {
             // Wait for the ads to load in
@@ -48,44 +42,11 @@ pub async fn run() -> Result<()> {
         // Wait for the red waiting screen to appear
         tab.wait_for_element(".view-waiting.e18o0sx0.css-saet2v.e19owgy77")?;
 
-        #[cfg(target_os = "windows")]
-        {
-            match reaction_time_actions(click_x, click_y) {
-                Ok(_) => {
-                    // Read the reaction time from the page
-                    tab.wait_for_element(".view-result.e18o0sx0.css-saet2v.e19owgy77")?;
-
-                    // Extract reaction time from the deepest div inside h1
-                    if let Ok(h1_element) = tab.find_element("h1") {
-                        if let Ok(time_div) = h1_element.find_element("div") {
-                            if let Ok(time_text) = time_div.get_inner_text() {
-                                if let Ok(reaction_ms) =
-                                    time_text.trim_end_matches(" ms").parse::<u32>()
-                                {
-                                    results.push(reaction_ms);
-                                    println!("Result: {} ms", reaction_ms);
-                                }
-                            }
-                        }
-                    }
-                }
-                Err(e) => {
-                    println!("Windows optimization failed: {}", e);
-                }
-            }
-        }
+        reaction_time_actions(&tab, click_x, click_y)?;
     }
 
-    if !results.is_empty() {
-        let average = results.iter().sum::<u32>() as f32 / results.len() as f32;
-        let best = *results.iter().min().unwrap();
-        let worst = *results.iter().max().unwrap();
-        println!("\n📊 Reaction Time Results:");
-        println!("  Average: {:.1} ms", average);
-        println!("  Best: {} ms", best);
-        println!("  Worst: {} ms", worst);
-        println!("  All results: {:?}", results);
-    }
+    // Wait to see the result
+    std::thread::sleep(Duration::from_secs(5));
 
     Ok(())
 }
@@ -102,48 +63,19 @@ fn get_reaction_area_coordinates(tab: &headless_chrome::Tab) -> Result<(i32, i32
     Ok((center_x, center_y))
 }
 
-#[cfg(target_os = "windows")]
-fn reaction_time_actions(click_x: i32, click_y: i32) -> Result<u32, String> {
-    unsafe {
-        let hwnd = GetDesktopWindow();
-        let hdc = GetDC(hwnd);
+fn reaction_time_actions(tab: &Arc<Tab>, click_x: i32, click_y: i32) -> Result<()> {
+    // Find the element to scan
+    let reaction_element = tab.find_element(".view-waiting.e18o0sx0.css-saet2v.e19owgy77")?;
 
-        if hdc.is_null() {
-            return Err("Failed to get device context".to_string());
+    while !is_kill_switch_pressed() {
+        let reaction_element_content = reaction_element.get_content()?;
+
+        // Check if "Click!" is present in the HTML content
+        if reaction_element_content.contains("Click!") {
+            click_on_pixel(click_x, click_y)?;
+            break;
         }
-
-        // Target green color
-        const TARGET_GREEN: u32 = 0x6ADB4B;
-
-        // Pre-position cursor to minimize click latency
-        SetCursorPos(click_x, click_y);
-
-        // Remove frame synchronization entirely - just poll as fast as possible
-        let start_time = std::time::Instant::now();
-        let mut iteration_count = 0;
-
-        loop {
-            // Direct pixel read - no frame waiting
-            let pixel_color = GetPixel(hdc, click_x, click_y);
-
-            // Immediate color check and click
-            if pixel_color == TARGET_GREEN {
-                // INSTANT click - no delay whatsoever
-                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-                ReleaseDC(hwnd, hdc);
-                return Ok(0);
-            }
-
-            // Check timeout less frequently to reduce overhead
-            iteration_count += 1;
-            if iteration_count % 10000 == 0 && start_time.elapsed().as_secs() > 10 {
-                break;
-            }
-        }
-
-        // Cleanup on timeout
-        ReleaseDC(hwnd, hdc);
     }
 
-    Err("Green color not detected within timeout".to_string())
+    Ok(())
 }

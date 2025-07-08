@@ -5,7 +5,6 @@ use crate::utils::{
 use super::TestRunner;
 use anyhow::Result;
 use headless_chrome::Tab;
-use scraper::{Html, Selector};
 use std::{collections::HashSet, sync::Arc, time::Duration};
 
 pub async fn run() -> Result<()> {
