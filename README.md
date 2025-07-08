@@ -22,7 +22,7 @@ When you run the executable, you are greeted with an overview of the available t
 
 ## Showcases
 ### Reaction Time
-⏯ Video coming soon...
+https://github.com/user-attachments/assets/cc54a70f-61b6-4137-a4a3-cfa3ff794c89
 
 ### Typing
 https://github.com/user-attachments/assets/6ec1e134-a56b-4a70-a770-8a993f9ac512
