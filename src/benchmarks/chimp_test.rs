@@ -3,7 +3,7 @@ use crate::utils::{
     click_cookies_button, click_on_pixel, determ_center_of_element, is_kill_switch_pressed, Point,
 };
 use anyhow::Result;
-use headless_chrome::Tab;
+use headless_chrome::{Element, Tab};
 use rayon::prelude::*;
 use scraper::{Html, Selector};
 use std::sync::Arc;
@@ -106,7 +106,7 @@ pub async fn run() -> Result<()> {
 /// This function will return a grid template where the screen coordinates of each cell are stored.
 /// The grid template will be used by later logic to know where to click on the screen for each cell.
 fn create_grid_template_from_html(
-    tab: &Tab,
+    element: &Element,
     window_x: &i32,
     window_y: &i32,
     x_offset: &i32,
@@ -115,7 +115,7 @@ fn create_grid_template_from_html(
     let mut grid = ChimpGrid::new();
 
     // Find all row elements
-    let rows = tab.find_elements(".css-k008qs")?;
+    let rows = element.find_elements(".css-k008qs")?;
 
     // Process rows in parallel and collect cells
     let cells: Result<Vec<Vec<GridCell>>> = rows
@@ -209,24 +209,26 @@ fn chimp_test_actions(tab: &Arc<Tab>) -> Result<()> {
     let start_time = Instant::now();
     let mut init_grid_time: u128 = 0;
 
-    // TODO: Implement an optimization to find the element containing the grid outside the loop, and using that instead of the entire page for retrieving the HTML (See verbal_memory.rs)
+    // Click once on the start button
+    click_on_pixel(next_button_location.x, next_button_location.y)?;
+
+    let grid_element = tab.find_element(".desktop-only")?;
+
     while !is_kill_switch_pressed() {
         println!("Pass {}", pass);
         // Press the start/continue button
-        println!("Searching the start/continue button");
-        std::thread::sleep(Duration::from_millis(5));
         click_on_pixel(next_button_location.x, next_button_location.y)?;
         println!("Clicked the start/continue button");
 
         // Wait a moment for the grid to appear
-        std::thread::sleep(Duration::from_millis(5));
+        std::thread::sleep(Duration::from_millis(1));
 
         // Initialize the grid on the first run
         if grid.is_none() {
             println!("Initializing grid structure from HTML");
 
             grid = Some(create_grid_template_from_html(
-                tab,
+                &grid_element,
                 &window_x,
                 &window_y,
                 &x_offset_browser,
@@ -238,10 +240,10 @@ fn chimp_test_actions(tab: &Arc<Tab>) -> Result<()> {
         let template_grid = grid.as_ref().unwrap();
 
         // Get the inner HTML of the container
-        let html_content = tab.get_content()?;
+        let grid_content = grid_element.get_content()?;
 
         // Parse numbers and their positions from HTML
-        let number_positions = parse_numbers_from_html(&html_content)?;
+        let number_positions = parse_numbers_from_html(&grid_content)?;
 
         // Sort numbers by their value to click them in order
         let mut sorted_positions = number_positions;
@@ -250,7 +252,7 @@ fn chimp_test_actions(tab: &Arc<Tab>) -> Result<()> {
         // Click numbers in sorted order
         for pos in sorted_positions {
             if let Some(point) = template_grid.get_coordinates(pos.row, pos.col) {
-                std::thread::sleep(Duration::from_millis(3));
+                std::thread::sleep(Duration::from_millis(2));
                 click_on_pixel(point.x, point.y)?;
             } else {
                 println!(

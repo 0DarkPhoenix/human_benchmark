@@ -24,9 +24,9 @@ pub async fn run() -> Result<()> {
     let (click_x, click_y) = get_reaction_area_coordinates(&tab)?;
     println!("Reaction area coordinates: ({}, {})", click_x, click_y);
 
-    for round in 1..6 {
+    for round in 0..5 {
         // Click start button
-        if round == 1 {
+        if round == 0 {
             // Wait for the ads to load in
             std::thread::sleep(std::time::Duration::from_secs(5));
 
